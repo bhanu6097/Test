@@ -1,0 +1,207 @@
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  SectionList,
+} from 'react-native';
+import Constants from 'expo-constants';
+
+const DATA = [{
+        id: "1",
+        title: "Clean sink",
+        startDate: 2/18/2020,
+        dueDate: 2/18/2020,
+        assignees: ['Alice', 'Bob'],
+        status: 'Unclaimed',
+        highPriority: false,
+        hasPhotos: false,
+        isRecurring: true,
+        reviewNeeded: false,
+        description: 'Clean out the sink. Do it good',
+        createdByDemoOnly: '',
+        workgroupDemoOnly: 'Fresh',
+        folderDemoOnly: 'Bakery',
+        claimerDemoOnly: ''
+       },
+      {
+        id: "2",
+        title: "Sunday Stock",
+        startDate: 2/18/2020,
+        dueDate: 2/20/2020,
+        assignees: ['Matt'],
+        status: 'Assigned',
+        highPriority: true,
+        hasPhotos: true,
+        isRecurring: false,
+        reviewNeeded: true,
+        description: '',
+        createdByDemoOnly: '',
+        workgroupDemoOnly: 'Merchandising',
+        folderDemoOnly: 'Merchandising',
+        claimerDemoOnly: 'Matt'
+      },
+      {
+        id: "3",
+        title: "Stock Cheerios",
+        startDate: 2/18/2020,
+        dueDate: 2/27/2020,
+        assignees: ['Bob', 'Alice'],
+        status: 'Unclaimed',
+        highPriority: false,
+        hasPhotos: false,
+        isRecurring: false,
+        reviewNeeded: false,
+        description: '',
+        createdByDemoOnly: '',
+        workgroupDemoOnly: 'Merchandising',
+        folderDemoOnly: 'Merchandising',
+        claimerDemoOnly: ''
+      },
+      // {
+      //   id: "4",
+      //   title: "Cut steaks in the shape of Texas",
+      //   startDate: t,
+      //   dueDate: tm,
+      //   assignees: ['Charlie'],
+      //   status: 'Unclaimed',
+      //   highPriority: false,
+      //   hasPhotos: false,
+      //   isRecurring: false,
+      //   reviewNeeded: false,
+      //   description: '',
+      //   createdByDemoOnly: 'bob',
+      //   workgroupDemoOnly: 'Fresh',
+      //   folderDemoOnly: 'Meat',
+      //   claimerDemoOnly: 'Charlie'
+      // },
+      // {
+      //   id: "5",
+      //   title: "Lazer pop",
+      //   startDate: t,
+      //   dueDate: tm,
+      //   assignees: ['Matt'],
+      //   status: 'Assigned',
+      //   highPriority: false,
+      //   hasPhotos: false,
+      //   isRecurring: false,
+      //   reviewNeeded: false,
+      //   description: '',
+      //   createdByDemoOnly: 'bob',
+      //   workgroupDemoOnly: 'Merchandising',
+      //   folderDemoOnly: 'Merchandising',
+      //   claimerDemoOnly: 'Matt'
+      // },
+      // {
+      //   id: "6",
+      //   title: "Tell associates about new stuff",
+      //   startDate: t,
+      //   dueDate: '02/28/20',
+      //   assignees: ['Tim', 'Todd'],
+      //   status: 'Unclaimed',
+      //   highPriority: false,
+      //   hasPhotos: false,
+      //   isRecurring: false,
+      //   reviewNeeded: false,
+      //   description: '',
+      //   createdByDemoOnly: '',
+      //   workgroupDemoOnly: 'All Leads',
+      //   folderDemoOnly: 'All Leads',
+      //   claimerDemoOnly: ''
+      // },
+      // {
+      //   id: "7",
+      //   title: "Extra Scones",
+      //   startDate: t,
+      //   dueDate: tm,
+      //   assignees: ['Bob', 'Alice'],
+      //   status: 'In review',
+      //   highPriority: false,
+      //   hasPhotos: false,
+      //   isRecurring: false,
+      //   reviewNeeded: false,
+      //   description: '',
+      //   createdByDemoOnly: '',
+      //   workgroupDemoOnly: 'Fresh',
+      //   folderDemoOnly: 'Bakery',
+      //   claimerDemoOnly: ''
+      // },
+      ];
+
+
+function Item( {title} ) {
+  console.log('qqqq', title);
+  return (
+    <View style={styles.item}>
+      <Text style={styles.title}>{title.title}</Text>
+    </View>
+  );
+}
+
+
+function setDay(date, dayOfWeek) {
+  let today = new Date(date.getTime ());
+  today.setDate(date.getDate() + (dayOfWeek + 7 - date.getDay()) % 7);
+  return date;
+}
+function formateData (DATA) {
+  let dayOfWeek = 6;//friday
+  let today = new Date('2/18/2020'); // new Date();
+  let thisWeek = new Date('2/21/2020'); //new Date("mm/dd/yyyy");
+  // thisWeek.setDate(thisWeek.getDate() + (dayOfWeek + 7 - thisWeek.getDay()) % 7);
+  let nextWeek = new Date('2/28/2020');// thisWeek.setDate(thisWeek.getDate() + (dayOfWeek + 7 - thisWeek.getDay()) % 7);
+   let dueData = [];
+   let thisWeekData = [];
+   let nextWeekData = [];
+   DATA.map((item, index)=> {
+     let itemDueDate = new Date(item.dueDate)
+     let itemStartDate = new Date(item.startDate)
+     //console.log('2222', itemDueDate > itemStartDate);
+     if(today < itemDueDate){
+       dueData.push(item);
+     } else if(itemStartDate < thisWeek) {
+       thisWeekData.push(item);
+     } else {
+       nextWeekData.push(item);
+     }
+   })
+    //console.log('1111', dueData, thisWeekData, nextWeekData);
+    let data  = [{ title: 'OverDue', data: dueData}, { title: 'ThisWeek', data: thisWeekData}, { title: 'NextWeek', data: nextWeekData}];
+    return data;
+}
+
+export default function App() {
+  let refinedData = formateData(DATA);
+  return (
+    <SafeAreaView style={styles.container}>
+      <SectionList
+        sections={DATA}
+        // keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) =>{console.log('wwwww', item);  return(<Item title={item} />)}}
+        // renderSectionHeader={({ section: { title } }) => (
+        //   <Text style={styles.header}>{title}</Text>
+        // )}
+      />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: Constants.statusBarHeight,
+    marginHorizontal: 16,
+  },
+  item: {
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+    marginVertical: 8,
+  },
+  header: {
+    fontSize: 32,
+  },
+  title: {
+    fontSize: 24,
+  },
+});
